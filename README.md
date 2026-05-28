@@ -7,6 +7,15 @@ docker run -it --name mesh-dev \
   -v $(pwd)/ros2_ws:/ros2_ws \
   mesh-reconstruction
 ```
+
+### On Windows...
+```
+git clone https://github.com/judithrodriguezchacon/Mesh_Reconstruction.git
+cd Mesh_Reconstruction
+docker build -t mesh-reconstruction .
+docker run -it --name mesh-dev -v $(pwd -W)/ros2_ws:/ros2_ws mesh-reconstruction
+```
+
 ### next times 
 ```
 docker start mesh-dev
