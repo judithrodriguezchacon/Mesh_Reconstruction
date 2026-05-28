@@ -1,31 +1,23 @@
-#image we're using
+#ROS2 jazzy enviroment
 FROM osrf/ros:jazzy-desktop-full
 
-#avoid interactive prompts
+#avoid interactive prompts during installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-#install useful ROS + Python tools
+#install useful ROS2 + Python development tools
 RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-colcon-common-extensions \
+    python3-rosdep \
     git \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
-#create ROS workspace
+#create the ROS2 workspace location inside the container
 WORKDIR /ros2_ws
 
-#copy workspace into container
-COPY ros2_workspace/src ./src
-
-#build workspace
-SHELL ["/bin/bash", "-c"]
-
-RUN source /opt/ros/jazzy/setup.bash && \
-    colcon build
-
-#source ROS automatically
+#source ROS2 automatically when opening the container
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
-RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
 
+#start in bash
 CMD ["/bin/bash"]
