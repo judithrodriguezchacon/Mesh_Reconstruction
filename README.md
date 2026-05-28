@@ -1,41 +1,19 @@
-## Setup
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/judithrodriguezchacon/Mesh_Reconstruction.git
-cd Mesh_Reconstruction
+## change of plans gang
+### first time do
 ```
-
-
-### 2. Build the Docker image
-
-```bash
+git clone ...
 docker build -t mesh-reconstruction .
+docker run -it --name mesh-dev \
+  -v $(pwd)/ros2_ws:/ros2_ws \
+  mesh-reconstruction
 ```
-
-
-### 3. Run the container
-
-```bash
-docker run -it mesh-reconstruction
+### next times 
 ```
-
----
-
-
-### Build ROS2 Notes
-
-Inside the container:
-
-```bash
-source /opt/ros/jazzy/setup.bash
+docker start mesh-dev
+docker exec -it mesh-dev bash
 ```
+### notes
+we all have to mount when running, that is not something in the dockerfile so that is the reason of  -v $(pwd)/ros2_ws:/ros2_ws \n
+also:
+this is not the only way to do it, we could either create a new container each time or have one container that remains alive, I chose the one container for its simplicity
 
-To build the workspace:
-
-```bash
-cd /ros2_workspace
-colcon build
-source install/setup.bash
-```
