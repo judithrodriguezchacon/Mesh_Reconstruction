@@ -11,7 +11,10 @@ RUN apt-get update && apt-get install -y \
     python3-rosdep \
     git \
     vim \
-    ros-jazzy-depthai-ros \
+    usbutils \
+    ros2-testing-apt-source \
+    && apt-get update && apt-get install -y \
+    ros-jazzy-depthai-ros-v3 \
     && rm -rf /var/lib/apt/lists/*
 
 #create the ROS2 workspace location inside the container
