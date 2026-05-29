@@ -4,6 +4,9 @@
 git clone ...
 docker build -t mesh-reconstruction .
 docker run -it --name mesh-dev \
+  --network=host \
+  --privileged \
+  -v /dev:/dev \
   -v $(pwd)/ros2_ws:/ros2_ws \
   mesh-reconstruction
 ```
