@@ -36,7 +36,7 @@ cd Mesh_Reconstruction
 sudo docker build -t mesh-reconstruction .
 sudo docker run -it --name mesh-dev --privileged --network host -v /dev:/dev -v "$(pwd)/ros2_ws:/ros2_ws" mesh-reconstruction
 source /opt/ros/jazzy/setup.bash
-ros2 launch depthai_ros_driver_v3 driver.launch.py
+ros2 launch depthai_ros_driver_v3 rgbd_pcl.launch.py
 ```
 
 ### Linux 1st time startup Terminal 2
