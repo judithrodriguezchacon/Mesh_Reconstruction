@@ -25,37 +25,40 @@ def generate_launch_description():
                 
                 # REBUILT BALANCED SYNCHRONIZATION (Fixes the 5-second starvation drop)
                 'approx_sync': 'true',
-                'approx_sync_max_interval': '0.05', # Comfortably allows the 0.033s sensor drift
+                'approx_sync_max_interval': '0.03', # Increased to better match 30fps frame interval (33ms)
                 
                 # NODE-SPECIFIC QUEUES (This isolates the lag while keeping data alive)
                 'odom_topic_queue_size': '10',       # TIGHT: Keeps odometry tracking instant (kills the 1.2s lag)
                 'rtabmap_topic_queue_size': '100',   # WIDE: Gives the 1Hz mapping engine room to sample frames
                 'sync_queue_size': '100',            # Global fallback buffer
                 'qos': '2',                          # Matches bag QoS profiles automatically
-                
+
                 # Performance & Environment Settings
-                'wait_imu_to_init': 'false',
+                'wait_imu_to_init': 'true',
                 'use_sim_time': 'true',
                 'rtabmap_viz': 'false',
-                
+
                 # RTAB-MAP NODE OPTIMIZATIONS (Map Cleaning & Storage)
                 'rtabmap_args': (
-                    '--Vis/MaxFeatures 600 '        # Keeps computational math overhead low per frame
-                    '--Vis/MinInliers 15 '          # Stricter loop closure confirmation
-                    '--Rtabmap/DetectionRate 1.0 '  # Throttles map database insertions to a clean 1Hz ceiling
+                    '--Vis/MaxFeatures 600 '        # Reduced features for better robustness to blur/shake
+                    '--Vis/MinInliers 20 '          # Increased to require better quality loop closures
+                    '--Rtabmap/DetectionRate 1.0 '  # Increased to 1.0Hz for more frequent map updates
                     '--Mem/IncrementalMemory true '
-                    '--Kp/MaxFeatures 800 '         # Controls loop closure database size
-                    
+                    '--Kp/MaxFeatures 600 '         # Controls loop closure database size
+
                     # Point Cloud Cleanup (Voxel Grid & Noise Isolation filters)
-                    '--Cloud/VoxelSize 0.07 '       # Fuses overlapping ghost layers into clean 7cm surfaces
-                    '--Cloud/OutlierRadius 0.15 '   # Tighter radius search window (15cm)
-                    '--Cloud/OutlierMinNeighbors 8 '# Drops stray floating reflections off the shiny car panels
+                    '--Cloud/VoxelSize 0.025 '      # Smaller voxel (2.5cm) for finer detail
+                    '--Cloud/OutlierRadius 0.4 '    # Increased radius to better capture motion-blurred points
+                    '--Cloud/OutlierMinNeighbors 6 '# Increased min neighbors to keep only stable points
+                    '--Cloud/NoiseFiltering true '  # Re-enable noise filtering to clean up point cloud
+                    '--Cloud/VoxelFiltering true '  # Enable voxel filtering for additional cleanup
                 ),
                 
                 # ODOMETRY NODE OPTIMIZATIONS (Tracking Recovery & Surface Handling)
                 'odom_args': (
                     '--Odom/ResetCountdown 1 '
-                    '--OdomF2M/MaxSize 800 '        # Drastically shrinks tracking local map to zero out delay
+                    '--OdomF2M/MaxSize 1000 '       # Increased visual vocabulary for better tracking robustness
+                    '--Odom/IMUWeight 0.1 '         # Incorporate IMU data for improved motion estimation
                     '--Vis/FeatureType 8 '          # Keeps ORB (Type 8) active for smooth car surfaces
                     '--Vis/CorGuessWinSize 20 '     # Tightened matching window search zone to maximize processing speed
                 )
