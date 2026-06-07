@@ -12,7 +12,7 @@ class RTABMapMesher(Node):
         # Subscribe to rtabmap cloud map output
         self.subscription = self.create_subscription(
             PointCloud2,
-            '/rtabmap/cloud_map',
+            '/rtabmap/cloud_obstacles',
             self.listener_callback,
             10
         )
@@ -37,8 +37,19 @@ class RTABMapMesher(Node):
 
         # Generate a list of xyz points
         points = []
-        for p in pc2.read_points(latest_msg, field_names=('x', 'y', 'z'), skip_nans=True):
+        colors = []
+        for p in pc2.read_points(latest_msg, field_names=('x', 'y', 'z', 'rgb'), skip_nans=False):
+            if np.isnan(p[0]) or np.isnan(p[1]) or np.isnan(p[2]):
+                continue
+
             points.append([p[0], p[1], p[2]])
+
+            # Reinterpret as 4 bytes directly
+            packed = np.array([p[3]], dtype=np.float32).view(np.uint8)
+            b = packed[0] / 255.0
+            g = packed[1] / 255.0
+            r = packed[2] / 255.0
+            colors.append([r, g, b])
 
         self.get_logger().info(f'Processing LATEST cloud with {len(points)} points')
 
@@ -50,16 +61,17 @@ class RTABMapMesher(Node):
         # Generate a cloud and insert the np array of points
         cloud = o3d.geometry.PointCloud()
         cloud.points = o3d.utility.Vector3dVector(np.array(points, dtype=np.float64))
-        
+        cloud.colors = o3d.utility.Vector3dVector(np.array(colors, dtype=np.float64))
+
         # Save raw registered cloud first        
-        o3d.io.write_point_cloud('/home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/point_clouds/rtabmap_cloud.pcd', cloud)
-        self.get_logger().info('Saved point cloud to /home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/point_clouds/rtabmap_cloud.pcd')
+        o3d.io.write_point_cloud('/home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/point_clouds/manual_cloud.ply', cloud)
+        self.get_logger().info('Saved point cloud to /home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/point_clouds/manual_cloud.ply')
 
         # Downsample cloud
-        cloud = cloud.voxel_down_sample(voxel_size=0.03)
+        # cloud = cloud.voxel_down_sample(voxel_size=0.03)
 
         # Remove noise from cloud
-        cloud, _ = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.0)
+        # cloud, _ = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.0)
 
         # Estimate normals
         cloud.estimate_normals(
@@ -78,13 +90,27 @@ class RTABMapMesher(Node):
             depth=8
         )
 
+        # 1. Remove low density vertices first
         densities = np.asarray(densities)
         threshold = np.quantile(densities, 0.02)
         mesh.remove_vertices_by_mask(densities < threshold)
 
+        # 2. Get mesh vertices AFTER removal
+        mesh_pts = np.asarray(mesh.vertices)
+        cloud_cols = np.asarray(cloud.colors)
+
+        # 3. KNN color transfer
+        kdtree = o3d.geometry.KDTreeFlann(cloud)
+        vertex_colors = []
+        for v in mesh_pts:
+            _, idx, _ = kdtree.search_knn_vector_3d(v, 1)
+            vertex_colors.append(cloud_cols[idx[0]])
+
+        mesh.vertex_colors = o3d.utility.Vector3dVector(np.array(vertex_colors))
+
         # Write final mesh
-        o3d.io.write_triangle_mesh('/home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/meshes/rtabmap_mesh.ply', mesh)
-        self.get_logger().info('Saved mesh to /home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/meshes/rtabmap_mesh.ply')
+        o3d.io.write_triangle_mesh('/home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/meshes/manual_mesh.ply', mesh)
+        self.get_logger().info('Saved mesh to /home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/meshes/manual_mesh.ply')
 
         self.is_processing = False
 

@@ -14,34 +14,24 @@ def generate_launch_description():
             ),
             launch_arguments={
                 # Camera Topics
-                'rgb_topic':          '/oak/rgb/image_raw',
-                'depth_topic':        '/oak/stereo/image_raw',
-                'camera_info_topic':  '/oak/rgb/camera_info',
-                'frame_id':           'oak_rgb_camera_frame',
+                'rgb_topic': '/oak/rgb/image_raw',
+                'depth_topic': '/oak/stereo/image_raw',
+                'camera_info_topic': '/oak/rgb/camera_info',
+                'frame_id': 'oak_rgb_camera_frame',
 
                 # Bigger queues so fast bag playback doesn't overflow the sync buffer
-                'topic_queue_size':   '50',
-                'sync_queue_size':    '50',
-
-                # Cap odometry to 10Hz so it doesn't race ahead of rtabmap
-                'odom_max_update_rate': '10.0',
+                'topic_queue_size': '50',
+                'sync_queue_size': '50',
 
                 # Synchronization
-                'approx_sync':        'true',
-                'use_sim_time':       'false',
+                'approx_sync': 'true',
+                'use_sim_time': 'true',
 
                 # GUI
-                'rtabmap_viz':        'false',
-                'rviz':               'true',
+                'rtabmap_viz': 'false',
+                'rviz': 'false',
 
-                'rtabmap_args': '--delete_db_on_start '
-                                '--Rtabmap/DetectionRate 1 '
-                                '--Grid/3D true '
-                                '--Grid/NormalsSegmentation false',
-
-                # Tell rtabmap to keep color in the point cloud
-                'gen_cloud':              'true',
-                'cloud_voxel_size':       '0.05',
+                'rtabmap_args': '--Rtabmap/DetectionRate 1 ',  # Run loop closure at 1Hz
             }.items()
         )
     ])
