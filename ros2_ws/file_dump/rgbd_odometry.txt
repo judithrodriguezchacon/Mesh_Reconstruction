@@ -311,7 +311,7 @@
     Vis/SubPixWinSize: '3'
     always_check_imu_tf: true
     approx_sync: true
-    approx_sync_max_interval: 0.0
+    approx_sync_max_interval: 0.05
     config_path: ''
     depth_transport: raw
     diagnostic_updater:
