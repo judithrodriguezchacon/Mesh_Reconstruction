@@ -12,7 +12,7 @@ class RTABMapMesher(Node):
         # Subscribe to rtabmap cloud map output
         self.subscription = self.create_subscription(
             PointCloud2,
-            '/rtabmap/cloud_obstacles',
+            '/rtabmap/cloud_map',
             self.listener_callback,
             10
         )
@@ -63,54 +63,34 @@ class RTABMapMesher(Node):
         cloud.points = o3d.utility.Vector3dVector(np.array(points, dtype=np.float64))
         cloud.colors = o3d.utility.Vector3dVector(np.array(colors, dtype=np.float64))
 
+        cl, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=1.5)
+
+        # Select only the inlier points
+        cloud = cloud.select_by_index(ind)
+
         # Save raw registered cloud first        
         o3d.io.write_point_cloud('/home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/point_clouds/manual_cloud.ply', cloud)
         self.get_logger().info('Saved point cloud to /home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/point_clouds/manual_cloud.ply')
 
-        # Downsample cloud
-        # cloud = cloud.voxel_down_sample(voxel_size=0.03)
-
-        # Remove noise from cloud
-        # cloud, _ = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.0)
-
         # Estimate normals
         cloud.estimate_normals(
-            search_param=o3d.geometry.KDTreeSearchParamHybrid(
-                radius=0.10,
-                max_nn=30
-            )
+        search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30)
         )
-        cloud.orient_normals_consistent_tangent_plane(30)
-
+        cloud.orient_normals_towards_camera_location(np.array([0., 0., 0.]))
 
         self.get_logger().info('Creating mesh...')
-
         mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
-            cloud,
-            depth=8
+            cloud, depth=9
         )
 
-        # 1. Remove low density vertices first
         densities = np.asarray(densities)
-        threshold = np.quantile(densities, 0.02)
-        mesh.remove_vertices_by_mask(densities < threshold)
-
-        # 2. Get mesh vertices AFTER removal
-        mesh_pts = np.asarray(mesh.vertices)
-        cloud_cols = np.asarray(cloud.colors)
-
-        # 3. KNN color transfer
-        kdtree = o3d.geometry.KDTreeFlann(cloud)
-        vertex_colors = []
-        for v in mesh_pts:
-            _, idx, _ = kdtree.search_knn_vector_3d(v, 1)
-            vertex_colors.append(cloud_cols[idx[0]])
-
-        mesh.vertex_colors = o3d.utility.Vector3dVector(np.array(vertex_colors))
+        mesh.remove_vertices_by_mask(densities < np.quantile(densities, 0.10))
+        mesh.remove_unreferenced_vertices()
 
         # Write final mesh
-        o3d.io.write_triangle_mesh('/home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/meshes/manual_mesh.ply', mesh)
-        self.get_logger().info('Saved mesh to /home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/meshes/manual_mesh.ply')
+        output_mesh_path = '/home/yamato_matsumura/Mesh_Reconstruction/ros2_ws/meshes/manual_mesh.obj'
+        o3d.io.write_triangle_mesh(output_mesh_path, mesh)
+        self.get_logger().info(f'Saved mesh to {output_mesh_path}')
 
         self.is_processing = False
 

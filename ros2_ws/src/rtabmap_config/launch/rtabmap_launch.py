@@ -31,7 +31,7 @@ def generate_launch_description():
                 'rtabmap_viz': 'false',
                 'rviz': 'false',
 
-                'rtabmap_args': '--Rtabmap/DetectionRate 1 ',  # Run loop closure at 1Hz
+                'rtabmap_args': '--delete_db_on_start --Rtabmap/DetectionRate 1',
             }.items()
         )
     ])
