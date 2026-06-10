@@ -1,0 +1,121 @@
+Arguments (pass arguments as '<name>:=<value>'):
+
+    'name':
+        no description given
+        (default: 'oak')
+
+    'params_file':
+        no description given
+        (default: '/home/linux-env/Desktop/Mesh_Reconstruction/ros2_ws/src/mesh_reconstruction/config/camera_config.yaml')
+
+    'namespace':
+        no description given
+        (default: '')
+
+    'parent_frame':
+        no description given
+        (default: 'oak_parent_frame')
+
+    'camera_model':
+        no description given
+        (default: 'OAK-D-PRO')
+
+    'cam_pos_x':
+        no description given
+        (default: '0.0')
+
+    'cam_pos_y':
+        no description given
+        (default: '0.0')
+
+    'cam_pos_z':
+        no description given
+        (default: '0.0')
+
+    'cam_roll':
+        no description given
+        (default: '0.0')
+
+    'cam_pitch':
+        no description given
+        (default: '0.0')
+
+    'cam_yaw':
+        no description given
+        (default: '0.0')
+
+    'use_rviz':
+        no description given
+        (default: 'false')
+
+    'rviz_config':
+        no description given
+        (default: '/opt/ros/jazzy/share/depthai_ros_driver_v3/config/rviz/rgbd.rviz')
+
+    'rsp_use_composition':
+        no description given
+        (default: 'true')
+
+    'publish_tf_from_calibration':
+        Enables TF publishing from camera calibration file.
+        (default: 'true')
+
+    'imu_from_descr':
+        Enables IMU publishing from URDF.
+        (default: 'false')
+
+    'override_cam_model':
+        Overrides camera model from calibration file.
+        (default: 'false')
+
+    'use_gdb':
+        no description given
+        (default: 'false')
+
+    'use_valgrind':
+        no description given
+        (default: 'false')
+
+    'valgrind_args':
+        no description given
+        (default: '--leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=memcheck.log')
+
+    'use_perf':
+        no description given
+        (default: 'false')
+
+    'rs_compat':
+        Enables compatibility with RealSense nodes.
+        (default: 'false')
+
+    'pointcloud.enable':
+        no description given
+        (default: 'false')
+
+    'enable_color':
+        no description given
+        (default: 'true')
+
+    'enable_depth':
+        no description given
+        (default: 'true')
+
+    'enable_infra1':
+        no description given
+        (default: 'false')
+
+    'enable_infra2':
+        no description given
+        (default: 'false')
+
+    'depth_module.depth_profile':
+        no description given
+        (default: '640,400,30')
+
+    'rgb_camera.color_profile':
+        no description given
+        (default: '640,400,30')
+
+    'depth_module.infra_profile':
+        no description given
+        (default: '640,400,30')
