@@ -26,5 +26,6 @@ depthai_env/
 ros2_ws/meshes/
 ros2_ws/point_clouds/
 ros2_ws/file_dump/
+.DS_Store
 
 EOF
