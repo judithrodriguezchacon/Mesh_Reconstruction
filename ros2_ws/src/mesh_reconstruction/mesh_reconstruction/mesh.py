@@ -7,6 +7,7 @@ import open3d as o3d
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
 from std_msgs.msg import ColorRGBA
+import time
 
 class RTABMapMesher(Node):
     def __init__(self):
@@ -37,10 +38,14 @@ class RTABMapMesher(Node):
 
         latest_msg = self.latest_msg
         self.latest_msg = None
-
         self.is_processing = True
 
+        # ======================================= Point Cloud Processing =====================================
+        start_total_time = time.time()
+        self.get_logger().info('======================================')
+
         # Generate a list of xyz points
+        start_cloud_time = time.time()
         points = []
         colors = []
         for p in pc2.read_points(latest_msg, field_names=('x', 'y', 'z', 'rgb'), skip_nans=False):
@@ -56,7 +61,6 @@ class RTABMapMesher(Node):
             r = packed[2] / 255.0
             colors.append([r, g, b])
 
-        self.get_logger().info(f'Processing latest cloud with {len(points)} points')
 
         if len(points) < 100:
             self.get_logger().warn('Not enough points to mesh yet')
@@ -68,15 +72,13 @@ class RTABMapMesher(Node):
         cloud.points = o3d.utility.Vector3dVector(np.array(points, dtype=np.float64))
         cloud.colors = o3d.utility.Vector3dVector(np.array(colors, dtype=np.float64))
 
+        # Filter outliers
         cl, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=1.5)
-
-        # Select only the inlier points
         cloud = cloud.select_by_index(ind)
 
-        # Save raw registered cloud first
+        # Save raw registered cloud
         cloud_loc = "../point_clouds/rtabmap_cloud.ply"        
         o3d.io.write_point_cloud(cloud_loc, cloud)
-        self.get_logger().info(f"Saved point cloud to {cloud_loc}")
 
         # Estimate normals
         cloud.estimate_normals(
@@ -84,7 +86,12 @@ class RTABMapMesher(Node):
         )
         cloud.orient_normals_towards_camera_location(np.array([0., 0., 0.]))
 
-        self.get_logger().info('Creating mesh...')
+        cloud_duration = time.time() - start_cloud_time
+
+
+        # ======================================= Mesh Processing =====================================
+        start_mesh_time = time.time()
+
         mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
             cloud, depth=7
         )
@@ -96,10 +103,17 @@ class RTABMapMesher(Node):
         # Write final mesh
         mesh_loc = "../meshes/rtabmap_mesh.obj"
         o3d.io.write_triangle_mesh(mesh_loc, mesh)
-        self.get_logger().info(f'Saved mesh to {mesh_loc}')
 
         # Publish the mesh
         self.publish_mesh(mesh, latest_msg.header.frame_id)
+
+        mesh_duration = time.time() - start_mesh_time
+
+
+        self.get_logger().info(f" Cloud Processing Time : {cloud_duration:.4f} seconds ({len(cloud.points)} inliers)")
+        self.get_logger().info(f" Mesh Generation Time  : {mesh_duration:.4f} seconds ({len(mesh.triangles)} triangles)")
+        self.get_logger().info(f" Total Cycle Duration  : {(cloud_duration + mesh_duration):.4f} seconds")
+        self.get_logger().info('======================================\n')
 
         self.is_processing = False
 
@@ -157,11 +171,11 @@ class RTABMapMesher(Node):
                     marker.colors.append(c)
 
             self.mesh_publisher.publish(marker)
-            self.get_logger().info(f"Published mesh with {len(triangles)} triangles to ROS 2 topic.")
 
 def main():
     rclpy.init()
     node = RTABMapMesher()
+    node.get_logger().info("Initializing Mesh Node... Waiting for clouds")
 
     try:
         rclpy.spin(node)

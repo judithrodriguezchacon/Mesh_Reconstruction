@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>rtabmap_config</name>
+  <name>mesh_reconstruction</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="matsumura.yamato@gmail.com">yamato_matsumura</maintainer>

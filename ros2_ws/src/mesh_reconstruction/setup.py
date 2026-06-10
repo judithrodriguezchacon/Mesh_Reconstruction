@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'rtabmap_config'
+package_name = 'mesh_reconstruction'
 
 setup(
     name=package_name,
@@ -27,6 +27,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'mesh_node = mesh_reconstruction.mesh:main'
         ],
     },
 )
