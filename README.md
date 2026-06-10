@@ -42,3 +42,30 @@ min_num_faces: 0
 ```
 
 ---
+
+### Useful Commands
+
+See available topics:
+
+```bash
+
+ros2 topic list
+
+```
+
+See running nodes:
+
+```bash
+
+ros2 node list
+
+```
+
+See TF tree:
+
+```bash
+
+ros2 run tf2_tools view_frames
+
+```
+
