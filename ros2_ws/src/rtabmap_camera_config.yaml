@@ -1,0 +1,3 @@
+/oak:
+  ros__parameters:
+    delete_db_on_start: true

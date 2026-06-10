@@ -19,19 +19,21 @@ def generate_launch_description():
                 'camera_info_topic': '/oak/rgb/camera_info',
                 'frame_id': 'oak_rgb_camera_frame',
 
+                'approx_sync_max_interval': '0.02',
+
                 # Bigger queues so fast bag playback doesn't overflow the sync buffer
-                'topic_queue_size': '50',
-                'sync_queue_size': '50',
+                # 'topic_queue_size': '50',
+                # 'sync_queue_size': '50',
 
                 # Synchronization
                 'approx_sync': 'true',
-                'use_sim_time': 'true',
+                'use_sim_time': 'false',
 
                 # GUI
-                'rtabmap_viz': 'false',
-                'rviz': 'false',
+                # 'rtabmap_viz': 'false',
+                # 'rviz': 'false',
 
-                'rtabmap_args': '--delete_db_on_start --Rtabmap/DetectionRate 1',
+                'rtabmap_args': '--delete_db_on_start',
             }.items()
         )
     ])
