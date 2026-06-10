@@ -61,7 +61,6 @@ class RTABMapMesher(Node):
             r = packed[2] / 255.0
             colors.append([r, g, b])
 
-
         if len(points) < 100:
             self.get_logger().warn('Not enough points to mesh yet')
             self.is_processing = False
@@ -108,7 +107,6 @@ class RTABMapMesher(Node):
         self.publish_mesh(mesh, latest_msg.header.frame_id)
 
         mesh_duration = time.time() - start_mesh_time
-
 
         self.get_logger().info(f" Cloud Processing Time : {cloud_duration:.4f} seconds ({len(cloud.points)} inliers)")
         self.get_logger().info(f" Mesh Generation Time  : {mesh_duration:.4f} seconds ({len(mesh.triangles)} triangles)")
