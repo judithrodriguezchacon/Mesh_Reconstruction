@@ -1,8 +1,30 @@
+#builds
 ros2_ws/build/
 ros2_ws/install/
 ros2_ws/log/
-__pycache__/
-*.pyc
-.DS_Store
-ros2_ws/bags/
-.*
+
+#bags
+*.mcap
+*.bag
+*.db3
+
+#generated meshes/ point clouds
+*.ply
+*.pcd
+*.stl
+*.obj
+
+#TF graphs
+ros2_ws/frames_*.gv
+ros2_ws/frames_*.pdf
+ros2_ws/frames_view/
+
+#local stuff
+camera_data/
+depthai-python/
+depthai_env/
+ros2_ws/meshes/
+ros2_ws/point_clouds/
+ros2_ws/file_dump/
+
+EOF
