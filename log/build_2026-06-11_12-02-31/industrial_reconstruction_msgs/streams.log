@@ -1,0 +1,41 @@
+[0.033s] Invoking command in '/Users/judithrodriguez/Documents/CSCI370_FieldSession/Mesh_Reconstruction/build/industrial_reconstruction_msgs': SHLVL=2 _=/usr/bin/env /opt/homebrew/bin/cmake /Users/judithrodriguez/Documents/CSCI370_FieldSession/Mesh_Reconstruction/ros2_ws/src/industrial_reconstruction/industrial_reconstruction_msgs -DCMAKE_INSTALL_PREFIX=/Users/judithrodriguez/Documents/CSCI370_FieldSession/Mesh_Reconstruction/install/industrial_reconstruction_msgs
+[0.082s] CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
+[0.082s]   Compatibility with CMake < 3.10 will be removed from a future version of
+[0.082s]   CMake.
+[0.082s] 
+[0.082s]   Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+[0.082s]   to tell CMake that the project requires at least <min> but has been updated
+[0.082s]   to work with policies introduced by <max> or earlier.
+[0.082s] 
+[0.082s] 
+[2.699s] -- The C compiler identification is AppleClang 16.0.0.16000026
+[3.992s] -- The CXX compiler identification is AppleClang 16.0.0.16000026
+[4.031s] -- Detecting C compiler ABI info
+[4.365s] -- Detecting C compiler ABI info - done
+[4.382s] -- Check for working C compiler: /usr/bin/cc - skipped
+[4.383s] -- Detecting C compile features
+[4.383s] -- Detecting C compile features - done
+[4.393s] -- Detecting CXX compiler ABI info
+[4.579s] -- Detecting CXX compiler ABI info - done
+[4.596s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[4.596s] -- Detecting CXX compile features
+[4.597s] -- Detecting CXX compile features - done
+[4.648s] CMake Error at CMakeLists.txt:12 (find_package):
+[4.648s]   By not providing "Findament_cmake.cmake" in CMAKE_MODULE_PATH this project
+[4.648s]   has asked CMake to find a package configuration file provided by
+[4.648s]   "ament_cmake", but CMake did not find one.
+[4.648s] 
+[4.648s]   Could not find a package configuration file provided by "ament_cmake" with
+[4.648s]   any of the following names:
+[4.649s] 
+[4.649s]     ament_cmake.cps
+[4.649s]     ament_cmakeConfig.cmake
+[4.649s]     ament_cmake-config.cmake
+[4.649s] 
+[4.649s]   Add the installation prefix of "ament_cmake" to CMAKE_PREFIX_PATH or set
+[4.649s]   "ament_cmake_DIR" to a directory containing one of the above files.  If
+[4.649s]   "ament_cmake" provides a separate development package or SDK, be sure it
+[4.649s]   has been installed.
+[4.649s] 
+[4.650s] 
+[4.650s] -- Configuring incomplete, errors occurred!
