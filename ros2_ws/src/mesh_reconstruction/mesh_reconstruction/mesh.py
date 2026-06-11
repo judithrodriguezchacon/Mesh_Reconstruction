@@ -22,6 +22,7 @@ class RTABMapMesher(Node):
         )
 
         self.mesh_publisher = self.create_publisher(Marker, '/mesh', 10)
+        self.normals_publisher = self.create_publisher(Marker, '/mesh_normals', 10)
 
         self.latest_msg = None
         self.is_processing = False
@@ -83,7 +84,7 @@ class RTABMapMesher(Node):
         cloud.estimate_normals(
         search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30)
         )
-        cloud.orient_normals_towards_camera_location(np.array([0., 0., 0.]))
+        cloud.orient_normals_consistent_tangent_plane(k=15)
 
         cloud_duration = time.time() - start_cloud_time
 
@@ -92,7 +93,7 @@ class RTABMapMesher(Node):
         start_mesh_time = time.time()
 
         mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
-            cloud, depth=7
+            cloud, depth=8
         )
 
         densities = np.asarray(densities)
@@ -122,6 +123,9 @@ class RTABMapMesher(Node):
             vertices = np.asarray(o3d_mesh.vertices)
             triangles = np.asarray(o3d_mesh.triangles)
             vertex_colors = np.asarray(o3d_mesh.vertex_colors)
+            vertex_normals = np.asarray(o3d_mesh.vertex_normals)
+
+            timestamp = self.get_clock().now().to_msg()
 
             # Set up marker
             marker = Marker()
@@ -169,6 +173,44 @@ class RTABMapMesher(Node):
                     marker.colors.append(c)
 
             self.mesh_publisher.publish(marker)
+            
+
+            normal_marker = Marker()
+            normal_marker.header.frame_id = frame_id
+            normal_marker.header.stamp = timestamp
+            normal_marker.ns = "rtabmap_mesh_normals"
+            normal_marker.id = 1
+            normal_marker.type = Marker.LINE_LIST
+            normal_marker.action = Marker.ADD
+
+            # Configuration parameters for visual spike representation
+            normal_marker.scale.x = 0.002       # Width of the spike lines (2 mm)
+            normal_marker.color.r = 0.0         # Set color to vibrant neon green
+            normal_marker.color.g = 1.0
+            normal_marker.color.b = 0.0
+            normal_marker.color.a = 1.0
+            normal_length = 0.04                # Visual vector lengths (4 cm outwards)
+
+            # Downsample the rendering loop (step=10) to protect host graphic pipeline rates
+            for i in range(0, len(vertices), 10):
+                vert = vertices[i]
+                norm = vertex_normals[i]
+
+                # Vector Start Point (On the actual object boundary surface)
+                p_start = Point()
+                p_start.x = float(vert[0])
+                p_start.y = float(vert[1])
+                p_start.z = float(vert[2])
+                normal_marker.points.append(p_start)
+
+                # Vector End Point (Projected directly outwards in normal vector workspace direction)
+                p_end = Point()
+                p_end.x = float(vert[0] + norm[0] * normal_length)
+                p_end.y = float(vert[1] + norm[1] * normal_length)
+                p_end.z = float(vert[2] + norm[2] * normal_length)
+                normal_marker.points.append(p_end)
+
+            self.normals_publisher.publish(normal_marker)
 
 def main():
     rclpy.init()
