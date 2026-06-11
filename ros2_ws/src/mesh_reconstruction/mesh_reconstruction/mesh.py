@@ -76,7 +76,7 @@ class RTABMapMesher(Node):
         cloud = cloud.select_by_index(ind)
 
         # Save raw registered cloud
-        cloud_loc = "../point_clouds/rtabmap_cloud.ply"        
+        cloud_loc = "point_clouds/rtabmap_cloud.ply"        
         o3d.io.write_point_cloud(cloud_loc, cloud)
 
         # Estimate normals
@@ -100,7 +100,7 @@ class RTABMapMesher(Node):
         mesh.remove_unreferenced_vertices()
 
         # Write final mesh
-        mesh_loc = "../meshes/rtabmap_mesh.obj"
+        mesh_loc = "meshes/rtabmap_mesh.obj"
         o3d.io.write_triangle_mesh(mesh_loc, mesh)
 
         # Publish the mesh

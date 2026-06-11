@@ -21,6 +21,8 @@ def launch_setup(context, *args, **kwargs):
             "use_sim_time": use_sim_time_bool,
             'Mem/NotLinkedNodesKept': 'false',
             "Rtabmap/DetectionRate": "1.0",
+
+            "queue_size": 100,
         }
     ]
 
