@@ -22,7 +22,8 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "params_file",
             default_value=os.path.join(
-                str(Path.home()), 
+                str(Path.home()),
+                "Desktop",
                 "Mesh_Reconstruction", 
                 "ros2_ws", 
                 "src", 

@@ -11,6 +11,12 @@
     stereo:
       i_synced: true
       i_depth_preset: DEFAULT
+
+      # Adjusts the visible depths threshold
+      i_enable_threshold_filter: true
+      i_threshold_filter_min_range: 50
+      i_threshold_filter_max_range: 2400
+
     rgb:
       i_synced: true
     imu:
