@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* 
 
 # Open3D
-RUN pip3 install --break-system-packages open3d
+RUN pip3 install --break-system-packages --ignore-installed open3d
 
 # Workspace
 WORKDIR /ros2_ws
