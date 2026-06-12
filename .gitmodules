@@ -1,0 +1,3 @@
+[submodule "ros2_ws/src/industrial_reconstruction"]
+	path = ros2_ws/src/industrial_reconstruction
+	url = https://github.com/StratomInc/industrial_reconstruction.git
