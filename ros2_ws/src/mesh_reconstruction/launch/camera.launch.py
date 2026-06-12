@@ -24,7 +24,7 @@ def generate_launch_description():
             default_value=os.path.join(
                 str(Path.home()),
                 "Desktop",
-                "Mesh_Reconstruction", 
+                "Mesh_Reconstruction_RTAB", 
                 "ros2_ws", 
                 "src", 
                 "mesh_reconstruction", 

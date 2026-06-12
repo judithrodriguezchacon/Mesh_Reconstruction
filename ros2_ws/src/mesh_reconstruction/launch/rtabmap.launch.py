@@ -20,9 +20,15 @@ def launch_setup(context, *args, **kwargs):
             "approx_sync": True,
             "use_sim_time": use_sim_time_bool,
             'Mem/NotLinkedNodesKept': 'false',
-            "Rtabmap/DetectionRate": "1.0",
+            "Rtabmap/DetectionRate": "10.0",
 
-            "queue_size": 100,
+            # "Grid/RayTracing": 'false',
+            # "Vis/InlierDistance": '0.02',
+            # "Vis/MinInliers": '30',
+            # "RGBD/LocalBundleOnLoopClosure": 'false',
+            #"Grid/CellSize": '0.02',
+            # "Icp/VoxelSize": '0.02',
+
         }
     ]
 

@@ -44,6 +44,7 @@ class RTABMapMesher(Node):
         # ======================================= Point Cloud Processing =====================================
         start_total_time = time.time()
         self.get_logger().info('======================================')
+        self.get_logger().info("Processing Scene...")
 
         # Generate a list of xyz points
         start_cloud_time = time.time()
@@ -56,7 +57,7 @@ class RTABMapMesher(Node):
             points.append([p[0], p[1], p[2]])
 
             # Reinterpret as 4 bytes directly
-            packed = np.array([p[3]], dtype=np.float32).view(np.uint8)
+            packed = np.array([p[3]], dtype=np.float32).view(np.uint8) 
             b = packed[0] / 255.0
             g = packed[1] / 255.0
             r = packed[2] / 255.0
@@ -72,9 +73,12 @@ class RTABMapMesher(Node):
         cloud.points = o3d.utility.Vector3dVector(np.array(points, dtype=np.float64))
         cloud.colors = o3d.utility.Vector3dVector(np.array(colors, dtype=np.float64))
 
+        cloud = cloud.voxel_down_sample(voxel_size=0.01)  # 2 cm, tune to your scale
+
         # Filter outliers
-        cl, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=1.5)
-        cloud = cloud.select_by_index(ind)
+        cloud, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=1.5)
+        cloud, ind = cloud.remove_radius_outlier(nb_points=8, radius=0.06)
+        #cloud = cloud.select_by_index(ind)
 
         # Save raw registered cloud
         cloud_loc = "point_clouds/rtabmap_cloud.ply"        
@@ -92,12 +96,22 @@ class RTABMapMesher(Node):
         # ======================================= Mesh Processing =====================================
         start_mesh_time = time.time()
 
-        mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
-            cloud, depth=8
-        )
+        # mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
+        #     cloud, depth=10
+        # )
+        # densities = np.asarray(densities)
+        # mesh.remove_vertices_by_mask(densities < np.quantile(densities, 0.10))
 
-        densities = np.asarray(densities)
-        mesh.remove_vertices_by_mask(densities < np.quantile(densities, 0.10))
+        distances = cloud.compute_nearest_neighbor_distance()
+        avg_dist = np.mean(distances)
+        # print(np.mean(distances))
+        # avg_dist = 0.02
+        radii = [avg_dist, 2 * avg_dist, 10 * avg_dist]
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(
+            cloud, o3d.utility.DoubleVector(radii)
+        )  
+
+        mesh.remove_degenerate_triangles()
         mesh.remove_unreferenced_vertices()
 
         # Write final mesh

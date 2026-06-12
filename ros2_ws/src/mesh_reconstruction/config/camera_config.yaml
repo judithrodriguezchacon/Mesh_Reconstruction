@@ -7,18 +7,21 @@
       i_pipeline_type: rgbd
       i_enable_vio: true
     vio:
-      i_fps: 30.0
+      i_fps: 10.0
     stereo:
       i_synced: true
       i_depth_preset: DEFAULT
+      i_fps: 10.0
+      i_aligned: true
 
       # Adjusts the visible depths threshold
       i_enable_threshold_filter: true
       i_threshold_filter_min_range: 50
-      i_threshold_filter_max_range: 2400
+      i_threshold_filter_max_range: 1200
 
     rgb:
       i_synced: true
+      i_fps: 10.0
     imu:
       i_batch_report_threshold: 1
       i_max_batch_reports: 10
