@@ -1,4 +1,7 @@
 #builds
+build/
+install/
+log/
 ros2_ws/build/
 ros2_ws/install/
 ros2_ws/log/
@@ -7,17 +10,21 @@ ros2_ws/log/
 *.mcap
 *.bag
 *.db3
+ros2_ws/bags
 
 #generated meshes/ point clouds
 *.ply
 *.pcd
 *.stl
 *.obj
+ros2_ws/meshes
+ros2_ws/point_clouds
 
 #TF graphs
 ros2_ws/frames_*.gv
 ros2_ws/frames_*.pdf
 ros2_ws/frames_view/
+ros2_ws/TF_graphs
 
 #local stuff
 camera_data/
