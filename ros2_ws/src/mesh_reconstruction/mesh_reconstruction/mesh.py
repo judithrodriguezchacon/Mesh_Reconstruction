@@ -73,11 +73,11 @@ class RTABMapMesher(Node):
         cloud.points = o3d.utility.Vector3dVector(np.array(points, dtype=np.float64))
         cloud.colors = o3d.utility.Vector3dVector(np.array(colors, dtype=np.float64))
 
-        cloud = cloud.voxel_down_sample(voxel_size=0.01)  # 2 cm, tune to your scale
+        cloud = cloud.voxel_down_sample(voxel_size=0.02)  # 2 cm, tune to your scale
 
         # Filter outliers
-        cloud, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=1.5)
-        cloud, ind = cloud.remove_radius_outlier(nb_points=8, radius=0.06)
+        cloud, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.5)
+        cloud, ind = cloud.remove_radius_outlier(nb_points=20, radius=0.05)
         #cloud = cloud.select_by_index(ind)
 
         # Save raw registered cloud
@@ -96,23 +96,28 @@ class RTABMapMesher(Node):
         # ======================================= Mesh Processing =====================================
         start_mesh_time = time.time()
 
-        # mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
-        #     cloud, depth=10
-        # )
-        # densities = np.asarray(densities)
-        # mesh.remove_vertices_by_mask(densities < np.quantile(densities, 0.10))
+        mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
+            cloud, depth=8
+        )
+        densities = np.asarray(densities)
+        mesh.remove_vertices_by_mask(densities < np.quantile(densities, 0.3))
 
-        distances = cloud.compute_nearest_neighbor_distance()
-        avg_dist = np.mean(distances)
-        # print(np.mean(distances))
-        # avg_dist = 0.02
-        radii = [avg_dist, 2 * avg_dist, 10 * avg_dist]
-        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(
-            cloud, o3d.utility.DoubleVector(radii)
-        )  
+        # distances = cloud.compute_nearest_neighbor_distance()
+        # avg_dist = np.mean(distances)
+        # # print(np.mean(distances))
+        # # avg_dist = 0.02
+        # radii = [avg_dist, 2 * avg_dist, 5* avg_dist, 10 * avg_dist]
+        # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(
+        #     cloud, o3d.utility.DoubleVector(radii)
+        # )  
 
         mesh.remove_degenerate_triangles()
         mesh.remove_unreferenced_vertices()
+        mesh.remove_non_manifold_edges()
+
+        # mesh = mesh.filter_smooth_simple(number_of_iterations=1)
+        mesh = mesh.filter_smooth_laplacian(number_of_iterations=1)
+
 
         # Write final mesh
         mesh_loc = "meshes/rtabmap_mesh.obj"
