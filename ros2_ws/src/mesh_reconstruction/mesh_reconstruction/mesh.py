@@ -73,11 +73,9 @@ class RTABMapMesher(Node):
         cloud.points = o3d.utility.Vector3dVector(np.array(points, dtype=np.float64))
         cloud.colors = o3d.utility.Vector3dVector(np.array(colors, dtype=np.float64))
 
-        cloud = cloud.voxel_down_sample(voxel_size=0.02)  # 2 cm, tune to your scale
-
         # Filter outliers
-        cloud, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.5)
-        cloud, ind = cloud.remove_radius_outlier(nb_points=20, radius=0.05)
+        # cloud, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.5)
+        # cloud, ind = cloud.remove_radius_outlier(nb_points=20, radius=0.05)
         #cloud = cloud.select_by_index(ind)
 
         # Save raw registered cloud
@@ -100,7 +98,7 @@ class RTABMapMesher(Node):
             cloud, depth=8
         )
         densities = np.asarray(densities)
-        mesh.remove_vertices_by_mask(densities < np.quantile(densities, 0.3))
+        mesh.remove_vertices_by_mask(densities < np.quantile(densities, 0.1))
 
         # distances = cloud.compute_nearest_neighbor_distance()
         # avg_dist = np.mean(distances)
