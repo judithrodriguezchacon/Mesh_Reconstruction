@@ -17,19 +17,17 @@ def generate_launch_description():
     name = LaunchConfiguration("name")
     params_file = LaunchConfiguration("params_file")
 
+    pkg_share = get_package_share_directory("mesh_reconstruction")
+    camera_config_path = os.path.join(
+        pkg_share,
+        "config",
+        "camera_config.yaml"
+    )
     declared_arguments = [
         DeclareLaunchArgument("name", default_value="oak"),
         DeclareLaunchArgument(
             "params_file",
-            default_value=os.path.join(
-                str(Path.home()),
-                "Desktop",
-                "Mesh_Reconstruction_RTAB", 
-                "ros2_ws", 
-                "src", 
-                "mesh_reconstruction", 
-                "config", 
-                "camera_config.yaml"),
+            default_value=camera_config_path
         ),
     ]
 
