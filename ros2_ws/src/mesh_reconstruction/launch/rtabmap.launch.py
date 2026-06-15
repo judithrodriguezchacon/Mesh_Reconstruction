@@ -4,7 +4,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
-def launch_setup(context, *args, **kwargs):
+def launch_setup(context):
     name = LaunchConfiguration("name").perform(context)
 
     # Get sim time arg
@@ -25,6 +25,7 @@ def launch_setup(context, *args, **kwargs):
         }
     ]
 
+    # Map topic names to match what Oak-D gives
     remappings = [
         ("rgb/image", name + "/rgb/image_raw"),
         ("rgb/camera_info", name + "/rgb/camera_info"),
@@ -33,7 +34,7 @@ def launch_setup(context, *args, **kwargs):
     ]
 
     return [
-        # RTAB-Map SLAM Node
+        # RTABMap SLAM node
         Node(
             package="rtabmap_slam",
             executable="rtabmap",
@@ -42,7 +43,7 @@ def launch_setup(context, *args, **kwargs):
             remappings=remappings,
             arguments=["-d"], # Clears previous database memory on startup
         ),
-        # RTAB-Map Visualization GUI
+        # RTABmap visualizer
         Node(
             package="rtabmap_viz",
             executable="rtabmap_viz",

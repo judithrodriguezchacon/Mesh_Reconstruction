@@ -8,6 +8,8 @@ from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
 from std_msgs.msg import ColorRGBA
 import time
+import os
+
 
 class RTABMapMesher(Node):
     def __init__(self):
@@ -22,7 +24,6 @@ class RTABMapMesher(Node):
         )
 
         self.mesh_publisher = self.create_publisher(Marker, '/mesh', 10)
-        self.normals_publisher = self.create_publisher(Marker, '/mesh_normals', 10)
 
         self.latest_msg = None
         self.is_processing = False
@@ -42,7 +43,6 @@ class RTABMapMesher(Node):
         self.is_processing = True
 
         # ======================================= Point Cloud Processing =====================================
-        start_total_time = time.time()
         self.get_logger().info('======================================')
         self.get_logger().info("Processing Scene...")
 
@@ -56,7 +56,7 @@ class RTABMapMesher(Node):
 
             points.append([p[0], p[1], p[2]])
 
-            # Reinterpret as 4 bytes directly
+            # Unpack colors
             packed = np.array([p[3]], dtype=np.float32).view(np.uint8) 
             b = packed[0] / 255.0
             g = packed[1] / 255.0
@@ -96,16 +96,16 @@ class RTABMapMesher(Node):
         # ======================================= Mesh Processing =====================================
         start_mesh_time = time.time()
 
+        # Poisson Mesh
         mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
             cloud, depth=8
         )
         densities = np.asarray(densities)
         mesh.remove_vertices_by_mask(densities < np.quantile(densities, 0.1))
 
+        # Ball pivot mesh
         # distances = cloud.compute_nearest_neighbor_distance()
         # avg_dist = np.mean(distances)
-        # # print(np.mean(distances))
-        # # avg_dist = 0.02
         # radii = [avg_dist, 2 * avg_dist, 5* avg_dist, 10 * avg_dist]
         # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(
         #     cloud, o3d.utility.DoubleVector(radii)
@@ -115,9 +115,9 @@ class RTABMapMesher(Node):
         mesh.remove_unreferenced_vertices()
         mesh.remove_non_manifold_edges()
 
+        # Smoothing
         # mesh = mesh.filter_smooth_simple(number_of_iterations=1)
         mesh = mesh.filter_smooth_laplacian(number_of_iterations=1)
-
 
         # Write final mesh
         mesh_loc = "meshes/rtabmap_mesh.obj"
@@ -136,7 +136,6 @@ class RTABMapMesher(Node):
         self.is_processing = False
 
     def publish_mesh(self, o3d_mesh, frame_id):
-            # Ensure vertex normals are computed so RViz shades it properly
             o3d_mesh.compute_vertex_normals()
 
             vertices = np.asarray(o3d_mesh.vertices)
@@ -155,7 +154,7 @@ class RTABMapMesher(Node):
             marker.type = Marker.TRIANGLE_LIST
             marker.action = Marker.ADD
 
-            # Position and orientation relative to its frame_id frame
+            # Position and orientation setup
             marker.pose.position.x = 0.0
             marker.pose.position.y = 0.0
             marker.pose.position.z = 0.0
@@ -164,18 +163,17 @@ class RTABMapMesher(Node):
             marker.pose.orientation.z = 0.0
             marker.pose.orientation.w = 1.0
 
-            # Scale must be 1.0 to keep original size
+            # Scale setup
             marker.scale.x = 1.0
             marker.scale.y = 1.0
             marker.scale.z = 1.0
 
-            # Base alpha configuration (individual vertex transparency fallback)
+            # Transparency setup
             marker.color.a = 1.0 
 
-            # ROS TRIANGLE_LIST expects groups of 3 consecutive points to form a triangle face
+            # Add all points to the marker
             for triangle in triangles:
                 for vertex_index in triangle:
-                    # 1. Map Coordinates
                     vert = vertices[vertex_index]
                     p = Point()
                     p.x = float(vert[0])
@@ -188,50 +186,16 @@ class RTABMapMesher(Node):
                     c.r = float(col[0])
                     c.g = float(col[1])
                     c.b = float(col[2])
-                    c.a = 1.0  # Fully opaque
+                    c.a = 1.0
                     marker.colors.append(c)
 
             self.mesh_publisher.publish(marker)
-            
-
-            normal_marker = Marker()
-            normal_marker.header.frame_id = frame_id
-            normal_marker.header.stamp = timestamp
-            normal_marker.ns = "rtabmap_mesh_normals"
-            normal_marker.id = 1
-            normal_marker.type = Marker.LINE_LIST
-            normal_marker.action = Marker.ADD
-
-            # Configuration parameters for visual spike representation
-            normal_marker.scale.x = 0.002       # Width of the spike lines (2 mm)
-            normal_marker.color.r = 0.0         # Set color to vibrant neon green
-            normal_marker.color.g = 1.0
-            normal_marker.color.b = 0.0
-            normal_marker.color.a = 1.0
-            normal_length = 0.04                # Visual vector lengths (4 cm outwards)
-
-            # Downsample the rendering loop (step=10) to protect host graphic pipeline rates
-            for i in range(0, len(vertices), 10):
-                vert = vertices[i]
-                norm = vertex_normals[i]
-
-                # Vector Start Point (On the actual object boundary surface)
-                p_start = Point()
-                p_start.x = float(vert[0])
-                p_start.y = float(vert[1])
-                p_start.z = float(vert[2])
-                normal_marker.points.append(p_start)
-
-                # Vector End Point (Projected directly outwards in normal vector workspace direction)
-                p_end = Point()
-                p_end.x = float(vert[0] + norm[0] * normal_length)
-                p_end.y = float(vert[1] + norm[1] * normal_length)
-                p_end.z = float(vert[2] + norm[2] * normal_length)
-                normal_marker.points.append(p_end)
-
-            self.normals_publisher.publish(normal_marker)
 
 def main():
+    # Create directories for outputs
+    os.makedirs("meshes", exist_ok=True)
+    os.makedirs("point_clouds", exist_ok=True)
+
     rclpy.init()
     node = RTABMapMesher()
     node.get_logger().info("Initializing Mesh Node... Waiting for clouds")

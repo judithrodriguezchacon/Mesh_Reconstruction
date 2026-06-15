@@ -1,10 +1,9 @@
 """
 Launches Oak-D camera with driver.launch.py file
-Uses custom configurations found in ~/Mesh_Reconstruction/ros2_ws/src/camera_config.yaml
+Uses custom configurations found in ~/Mesh_Reconstruction/ros2_ws/src/mesh_reconstruction/config/camera_config.yaml
 """
 
 import os
-from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
