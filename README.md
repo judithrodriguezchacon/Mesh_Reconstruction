@@ -40,8 +40,6 @@ sudo docker run -it --name mesh-dev \
   mesh-reconstruction
 ```
 
-> **Note:** `--privileged` is required to grant the container access to USB devices for Oak-D camera discovery. This flag should only be used in trusted environments.
-
 **Subsequent sessions** — if the container already exists, start and attach to it with:
 
 ```bash
