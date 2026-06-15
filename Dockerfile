@@ -1,10 +1,9 @@
-#ROS2 jazzy enviroment
+# ROS2 Jazzy
 FROM osrf/ros:jazzy-desktop-full
 
-#avoid interactive prompts during installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-#install useful ROS2 + Python development tools
+# General installs
 RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-colcon-common-extensions \
@@ -12,16 +11,25 @@ RUN apt-get update && apt-get install -y \
     git \
     vim \
     usbutils \
-    ros2-testing-apt-source \
-    && apt-get update && apt-get install -y \
-    ros-jazzy-depthai-ros-v3 \
     && rm -rf /var/lib/apt/lists/*
 
-#create the ROS2 workspace location inside the container
-WORKDIR /ros2_ws
+# RTABMap and Depth ai installs
+RUN apt-get update && apt-get install -y \
+    ros-jazzy-depthai-ros-v3 \
+    ros-jazzy-rtabmap-ros \
+    && rm -rf /var/lib/apt/lists/*
 
-#source ROS2 automatically when opening the container
+# Open3D install
+RUN pip3 install --break-system-packages --ignore-installed open3d
+
+
+# Create ros2_ws folder
+WORKDIR /ros2_ws/src
+
+# Source ROS2
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 
-#start in bash
+WORKDIR /ros2_ws
+
+# Start in bash
 CMD ["/bin/bash"]
