@@ -1,58 +1,123 @@
-# RTABMap Mesh Generation
+# RTABMap Mesh Reconstruction
 
-Depth registration and point cloud generation via RTABMap from Oak-D inputs, meshed with Open3D and published live to `/mesh`.
+This approach uses RTABMap for depth registration and Open3D for mesh generation to perform real-time 3D mesh reconstruction from an Oak-D stereo camera input. Mesh data is published live to the `/mesh` ROS 2 topic as well as saved locally.
 
-**Pipeline:** Oak-D camera → RTABMap registration → Open3D meshing → rviz2 / file output
+**Pipeline:** Oak-D → RTABMap (depth registration + point cloud) → Open3D (meshing) → `/mesh` topic / file output
+
+---
+
+## Prerequisites
+
+- Docker (with `sudo` privileges or appropriate group membership)
+- Linux host OS (required for Oak-D USB device discovery)
+- Oak-D camera
 
 ---
 
 ## Installation
 
-### 1. Clone the repo
+### 1. Clone the repository
 
 ```bash
-# rtabmap branch
 git clone -b rtabmap https://github.com/judithrodriguezchacon/Mesh_Reconstruction.git
 cd Mesh_Reconstruction
 ```
 
-### 2. Build and run the Docker container
+### 2. Build the Docker image
 
 ```bash
 sudo docker build -t mesh-reconstruction .
+```
+
+### 3. Start the container
+
+```bash
 sudo docker run -it --name mesh-dev \
-  --privileged --network host \
+  --privileged \
+  --network host \
   -v /dev:/dev \
   -v "$(pwd)/ros2_ws:/ros2_ws" \
   mesh-reconstruction
 ```
 
-> **Note:** The Oak-D camera requires Linux for USB discovery. `--privileged` grants the container device access.
+> **Note:** `--privileged` is required to grant the container access to USB devices for Oak-D camera discovery. This flag should only be used in trusted environments.
+
+**Subsequent sessions** — if the container already exists, start and attach to it with:
+
+```bash
+docker start mesh-dev
+docker exec -it mesh-dev bash
+```
 
 ---
 
 ## Usage
 
-### 1. Build the workspace
+### 1. Build the ROS 2 workspace
+
+Inside the container, build and source the workspace:
 
 ```bash
-cd ros2_ws && colcon build
+colcon build && source install/setup.bash
 ```
 
-### 2. Launch nodes — each in its own terminal
+### 2. Launch the pipeline
 
-| Terminal | Command |
-|----------|---------|
-| 1 — Camera | `ros2 launch mesh_reconstruction camera.launch.py` |
-| 2 — RTABMap | `ros2 launch mesh_reconstruction rtabmap.launch.py` |
-| 3 — Mesh node | `ros2 run mesh_reconstruction mesh_node` |
+Each component runs in its own terminal session. Open three terminals (via `docker exec -it mesh-dev bash`) and run the following:
+
+| Terminal | Role | Command |
+|----------|------|---------|
+| 1 | Camera driver | `ros2 launch mesh_reconstruction camera.launch.py` |
+| 2 | RTABMap registration | `ros2 launch mesh_reconstruction rtabmap.launch.py` |
+| 3 | Mesh node | `ros2 run mesh_reconstruction mesh_node` |
+
+Start the nodes in the order listed above to ensure proper topic availability at startup.
 
 ---
 
 ## Visualizing Results
 
-**Live in rviz2** — Subscribe to the `/mesh` topic to watch the mesh build in real time as the camera moves.
+### Live visualization
 
-**File output** — Mesh and point cloud files are saved to:
-- `ros2_ws/src/mesh`
-- `ros2_ws/src/point_cloud`
+Open rviz2 and subscribe to the `/mesh` topic to view the mesh updating in real time as the camera moves through the environment.
+
+```bash
+rviz2
+```
+
+Add `/mesh` by topic.
+
+### File output
+
+Mesh and point cloud files are written to the following directories within the workspace:
+
+| Output | Path |
+|--------|------|
+| Mesh files | `ros2_ws/src/mesh/` |
+| Point cloud files | `ros2_ws/src/point_cloud/` |
+
+---
+
+## Repository Structure
+
+```
+Mesh_Reconstruction/
+├── Dockerfile
+└── ros2_ws/
+    └── src/
+        └── mesh_reconstruction/
+            ├── launch/
+            │   ├── camera.launch.py
+            │   └── rtabmap.launch.py
+            └── mesh_reconstruction/
+                └── mesh_node.py
+```
+
+## Dependencies
+
+| Component | Role |
+|-----------|------|
+| [RTABMap](http://introlab.github.io/rtabmap/) | Real-time appearance-based mapping and depth registration |
+| [Open3D](http://www.open3d.org/) | Point cloud processing and mesh generation |
+| [DepthAI / depthai-ros](https://github.com/luxonis/depthai-ros) | Oak-D camera ROS 2 driver |
+| ROS 2 | Middleware and topic communication |
