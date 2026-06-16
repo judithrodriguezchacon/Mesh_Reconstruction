@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
 # Open3D
 RUN pip3 install --break-system-packages --ignore-installed open3d
 
+RUN pip3 install --force-reinstall numpy==1.26.4
+
 # Workspace
 WORKDIR /ros2_ws
 
