@@ -39,9 +39,8 @@ def generate_launch_description():
         "{",
         "tracking_frame: '", tracking_frame, "',",
         "relative_frame: '", relative_frame, "',",
-        # increased translation and rotational distance thresholds can help with reconstruction in environments with less geometric texture
-        "translation_distance: 0.01,",
-        "rotational_distance: 0.02,",
+        "translation_distance: 0.0,",
+        "rotational_distance: 0.0,",
         "live: ", live, ",",
         "tsdf_params: {",
         "voxel_length: ", voxel_length, ",",
