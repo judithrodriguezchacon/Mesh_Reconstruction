@@ -39,8 +39,9 @@ def generate_launch_description():
         "{",
         "tracking_frame: '", tracking_frame, "',",
         "relative_frame: '", relative_frame, "',",
-        "translation_distance: 0.0,",
-        "rotational_distance: 0.0,",
+        # increased translation and rotational distance thresholds can help with reconstruction in environments with less geometric texture
+        "translation_distance: 0.01,",
+        "rotational_distance: 0.02,",
         "live: ", live, ",",
         "tsdf_params: {",
         "voxel_length: ", voxel_length, ",",
@@ -115,7 +116,7 @@ def generate_launch_description():
         ),
 
         TimerAction(
-            period=3.0,
+            period=15.0, #increase delay if reconstruction fails to start before service call is made
             actions=[
                 ExecuteProcess(
                     cmd=[

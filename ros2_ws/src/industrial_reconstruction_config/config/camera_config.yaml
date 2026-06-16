@@ -61,7 +61,7 @@
       i_enable_lazy_publisher: true
       i_enable_nn: false
       i_exposure_offset: 0
-      i_fps: 30.0
+      i_fps: 10.0
       i_fsync_continuous: false
       i_fsync_trigger: false
       i_get_base_device_timestamp: false
@@ -214,7 +214,7 @@
       i_enable_lazy_publisher: true
       i_enable_nn: false
       i_exposure_offset: 0
-      i_fps: 30.0
+      i_fps: 10.0
       i_fsync_continuous: false
       i_fsync_trigger: false
       i_get_base_device_timestamp: false
@@ -233,7 +233,7 @@
       i_reverse_stereo_socket_order: false
       i_simulate_from_topic: false
       i_simulated_topic_name: ''
-      i_synced: false
+      i_synced: true # set to true to ensure rgb and depth are synchronized for reconstruction
       i_undistorted: true
       i_update_ros_base_time_on_ros_msg: false
       i_use_max_resolution_possible: false
@@ -259,7 +259,7 @@
     rgbd:
       i_board_socket_id: 0
       i_get_base_device_timestamp: false
-      i_max_q_size: 2
+      i_max_q_size: 10 # increase if messages are being dropped in the pipeline
       i_num_threads: 1
       i_publish_topic: true
       i_run_align_on_host: true
@@ -274,7 +274,7 @@
       i_enable_lazy_publisher: true
       i_enable_nn: false
       i_exposure_offset: 0
-      i_fps: 30.0
+      i_fps: 10.0
       i_fsync_continuous: false
       i_fsync_trigger: false
       i_get_base_device_timestamp: false
@@ -342,7 +342,7 @@
       i_enable_threshold_filter: false
       i_exposure_offset: 0
       i_extended_disp: false
-      i_fps: 30.0
+      i_fps: 10.0
       i_get_base_device_timestamp: false
       i_height: 400
       i_left_rect_add_exposure_offset: false
@@ -392,7 +392,7 @@
       i_stereo_conf_threshold: 15
       i_subpixel: true
       i_subpixel_fractional_bits: 3
-      i_synced: false
+      i_synced: true # set to true to ensure rgb and depth are synchronized for reconstruction
       i_update_ros_base_time_on_ros_msg: false
       i_use_neural_depth: false
       i_width: 640
