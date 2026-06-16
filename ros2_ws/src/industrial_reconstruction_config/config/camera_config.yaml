@@ -31,7 +31,7 @@
     imu:
       i_acc_cov: 0.0
       i_acc_freq: 480
-      i_acc_mode: ACCELEROMETER_UNCALIBRATED
+      i_acc_mode: ACCELEROMETER_RAW
       i_batch_report_threshold: 5
       i_enable_acc: true
       i_enable_gyro: true
@@ -40,10 +40,10 @@
       i_get_base_device_timestamp: false
       i_gyro_cov: 0.0
       i_gyro_freq: 400
-      i_gyro_mode: GYROSCOPE_UNCALIBRATED
+      i_gyro_mode: GYROSCOPE_RAW
       i_mag_cov: 0.0
       i_mag_freq: 100
-      i_mag_mode: MAGNETOMETER_UNCALIBRATED
+      i_mag_mode: MAGNETOMETER_RAW
       i_max_batch_reports: 10
       i_max_q_size: 8
       i_message_type: IMU
