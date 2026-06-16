@@ -26,8 +26,8 @@
       i_tf_parent_frame: oak_parent_frame
       i_usb_port_id: ''
       i_usb_speed: SUPER
-      r_floodlight_intensity: 0.6000000238418579
-      r_laser_dot_intensity: 0.6000000238418579
+      r_floodlight_intensity: 0.0 # 0.6000000238418579
+      r_laser_dot_intensity: 0.0 # 0.6000000238418579
     imu:
       i_acc_cov: 0.0
       i_acc_freq: 480
