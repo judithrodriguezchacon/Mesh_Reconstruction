@@ -16,10 +16,10 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-depthai-ros-v3 \
     && rm -rf /var/lib/apt/lists/* 
 
-# Open3D
-RUN pip3 install --break-system-packages --ignore-installed open3d
-
-RUN pip3 install --force-reinstall numpy==1.26.4
+# Python packages
+RUN pip3 install --break-system-packages --ignore-installed \
+    "numpy<2" \
+    open3d
 
 # Workspace
 WORKDIR /ros2_ws
