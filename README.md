@@ -4,13 +4,10 @@ This branch contains the setup used to test the Stratom Industrial Reconstructio
 
 ## First Time Setup
 
-Clone the repository and pull the submodules:
+Clone the repository and pull the submodules, then cd into it:
 
 ```bash
-git clone --recurse-submodules -b testIndustrial_reconstruction \
-https://github.com/judithrodriguezchacon/Mesh_Reconstruction.git
-
-cd Mesh_Reconstruction
+git clone --recurse-submodules -b testIndustrial_reconstruction https://github.com/judithrodriguezchacon/Mesh_Reconstruction.git
 ```
 
 If you already cloned the repo:
@@ -35,6 +32,7 @@ docker run -it --name mesh-dev \
   -v $(pwd)/ros2_ws:/ros2_ws \
   mesh-reconstruction
 ```
+Now follow daily use instructions starting at building the workspace.
 
 ## Daily Use
 
