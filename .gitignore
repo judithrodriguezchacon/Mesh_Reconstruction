@@ -19,6 +19,7 @@ ros2_ws/bags
 *.obj
 ros2_ws/meshes
 ros2_ws/point_clouds
+ros2_ws/file_dump
 
 #TF graphs
 ros2_ws/frames_*.gv
