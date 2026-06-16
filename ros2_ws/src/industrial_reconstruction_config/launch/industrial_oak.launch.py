@@ -77,7 +77,7 @@ def generate_launch_description():
         DeclareLaunchArgument("voxel_length", default_value="0.02"),
         DeclareLaunchArgument("sdf_trunc", default_value="0.06"),
         DeclareLaunchArgument("depth_scale", default_value="1000.0"),
-        DeclareLaunchArgument("depth_trunc", default_value="1.2"),
+        DeclareLaunchArgument("depth_trunc", default_value="1.5"),
         DeclareLaunchArgument("slop", default_value="0.6"),
         DeclareLaunchArgument("cache_count", default_value="30"),
         DeclareLaunchArgument("live", default_value="true"),
