@@ -1,5 +1,5 @@
 # Mesh Reconstruction
-
+This project utilizes an OAK-D-Pro camera with two different softwares to recreate the 3D geometry of a scene.
 ## ROS2
 This project uses ROS2 Jazzy.  
 Find the ROS2 Jazzy documentation [here](https://docs.ros.org/en/jazzy/index.html).  
