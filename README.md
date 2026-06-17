@@ -1,5 +1,6 @@
 # Mesh Reconstruction
-This project utilizes an OAK-D-Pro camera with two different softwares to recreate the 3D geometry of a scene.
+This project utilizes an OAK-D-Pro camera with two different softwares to recreate the 3D geometry of a scene. 
+There are two different branches for whether you want to use RTAB-Map or Industrial Reconstruction.
 ## ROS2
 This project uses ROS2 Jazzy.  
 Find the ROS2 Jazzy documentation [here](https://docs.ros.org/en/jazzy/index.html).  
