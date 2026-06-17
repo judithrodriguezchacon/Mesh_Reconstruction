@@ -21,7 +21,6 @@ setup(
     maintainer_email='judith_rodriguezchacon@mines.edu',
     description='Launch files and config files for industrial reconstruction with OAK-D.',
     license='TODO: License declaration',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [],
     },
