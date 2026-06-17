@@ -80,7 +80,6 @@ source /ros2_ws/install/setup.bash
 
 ros2 launch industrial_reconstruction_config camera.launch.py
 ```
-
 ---
 
 ## Running From a Bag
@@ -100,6 +99,7 @@ source /ros2_ws/install/setup.bash
 
 ros2 bag play bagName.mcap --clock --rate 0.5
 ```
+Wait until the bag is done running, and then you can save the mesh.
 
 ---
 
