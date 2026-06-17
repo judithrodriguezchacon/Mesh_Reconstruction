@@ -25,19 +25,20 @@ cd Mesh_Reconstruction
 ### 2. Build the Docker image
 
 ```bash
-docker build -t mesh-reconstruction .
+sudo docker build -t mesh-reconstruction .
 ```
 
 ### 3. Start the container
 
 ```bash
-docker run -it --name mesh-dev \
+sudo docker run -it --name mesh-dev \
   --privileged \
   --network host \
   -v /dev:/dev \
   -v "$(pwd)/ros2_ws:/ros2_ws" \
   mesh-reconstruction
 ```
+> **Note:** Installation command #2 and #3 require `sudo` to ensure the container and camera both have the correct permissions to be discovered.
 
 **Subsequent sessions** — if the container already exists, start and attach to it with:
 
@@ -46,19 +47,9 @@ docker start mesh-dev
 docker exec -it mesh-dev bash
 ```
 
-> **Note:** Installation command #2 and #3 may need to be run with `sudo` to ensure the container and camera both have the correct permissions to be discovered.
-
 ---
 
 ## Usage
-
-### 1. Build the ROS 2 workspace
-
-Inside the container, build and source the workspace:
-
-```bash
-colcon build && source install/setup.bash
-```
 
 ### 2. Launch the pipeline
 
