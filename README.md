@@ -53,14 +53,17 @@ sudo docker exec -it mesh-dev bash
 
 ## Usage
 
-### 2. Launch the pipeline
+### Launch the pipeline
 
 Each component runs in its own terminal. Open **three terminals** and attach each one to the container before running the commands below:
 
 ```bash
-# Attach to the container (run in each terminal)
 sudo docker start mesh-dev
+```
+```bash
 sudo docker exec -it mesh-dev bash
+```
+```bash
 colcon build && source install/setup.bash
 ```
 
