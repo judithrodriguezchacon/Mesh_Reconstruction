@@ -76,8 +76,8 @@ class RTABMapMesher(Node):
         # cloud = cloud.voxel_down_sample(voxel_size=0.001)
 
         # Filter outliers
-        # cloud, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.5)
-        # cloud, ind = cloud.remove_radius_outlier(nb_points=20, radius=0.05)
+        cloud, ind = cloud.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.5)
+        cloud, ind = cloud.remove_radius_outlier(nb_points=20, radius=0.05)
         #cloud = cloud.select_by_index(ind)
 
         # Save raw registered cloud
