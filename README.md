@@ -5,7 +5,8 @@ This branch contains the setup used to test the Stratom Industrial Reconstructio
 ## First Time Setup
 
 Clone the repository and pull the submodules, then cd into it:
-
+> **Note:** Some commands are run with `sudo` to ensure the camera is discoverable by the Docker container.  
+> **Note:** You must be in the docker container in all terminals
 ```bash
 git clone --recurse-submodules -b testIndustrial_reconstruction https://github.com/judithrodriguezchacon/Mesh_Reconstruction.git
 ```
