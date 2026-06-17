@@ -15,6 +15,8 @@ This approach uses RTABMap for depth registration and Open3D for mesh generation
 
 ## Installation
 
+> **Note:** Some installation commands are run with `sudo` to ensure the camera is able to be discovered by the Docker container.
+
 ### 1. Clone the repository
 
 ```bash
@@ -38,13 +40,13 @@ sudo docker run -it --name mesh-dev \
   -v "$(pwd)/ros2_ws:/ros2_ws" \
   mesh-reconstruction
 ```
-> **Note:** Installation command #2 and #3 require `sudo` to ensure the container and camera both have the correct permissions to be discovered.
+
 
 **Subsequent sessions** — if the container already exists, start and attach to it with:
 
 ```bash
-docker start mesh-dev
-docker exec -it mesh-dev bash
+sudo docker start mesh-dev
+sudo docker exec -it mesh-dev bash
 ```
 
 ---
@@ -57,8 +59,8 @@ Each component runs in its own terminal. Open **three terminals** and attach eac
 
 ```bash
 # Attach to the container (run in each terminal)
-docker start mesh-dev
-docker exec -it mesh-dev bash
+sudo docker start mesh-dev
+sudo docker exec -it mesh-dev bash
 colcon build && source install/setup.bash
 ```
 
