@@ -19,13 +19,13 @@ git submodule update --init --recursive
 Build the Docker image:
 
 ```bash
-docker build -t mesh-reconstruction .
+sudo docker build -t mesh-reconstruction .
 ```
 
 Start the container:
 
 ```bash
-docker run -it --name mesh-dev \
+sudo docker run -it --name mesh-dev \
   --network=host \
   --privileged \
   -v /dev:/dev \
@@ -39,13 +39,13 @@ Now follow daily use instructions starting at building the workspace.
 Start the container:
 
 ```bash
-docker start mesh-dev
+sudo docker start mesh-dev
 ```
 
 Open a shell inside the container:
 
 ```bash
-docker exec -it mesh-dev bash
+sudo docker exec -it mesh-dev bash
 ```
 
 Build the workspace:
